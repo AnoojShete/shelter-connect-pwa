@@ -1,10 +1,8 @@
-'use client';
+interface ShelterSummaryCardProps {
+    openCount: number;
+}
 
-import { mockShelters } from '@/data/shelters';
-
-export function ShelterSummaryCard() {
-    const openCount = mockShelters.filter((s) => s.isOpen).length;
-
+export function ShelterSummaryCard({ openCount }: ShelterSummaryCardProps) {
     return (
         <div className="bg-white rounded-2xl p-5 shadow-sm transition-all duration-200">
             <div className="flex items-baseline gap-2">
@@ -22,3 +20,4 @@ export function ShelterSummaryCard() {
         </div>
     );
 }
+

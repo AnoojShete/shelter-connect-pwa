@@ -1,9 +1,27 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { isAuthenticated, getCurrentUser, logout } from '@/lib/auth';
+import { LogIn, LogOut } from 'lucide-react';
 
 export function Header() {
     const router = useRouter();
+    const [authed, setAuthed] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
+
+    useEffect(() => {
+        setAuthed(isAuthenticated());
+        const user = getCurrentUser();
+        if (user) setUserEmail(user.email);
+    }, []);
+
+    const handleLogout = () => {
+        logout();
+        setAuthed(false);
+        setUserEmail('');
+        router.push('/');
+    };
 
     return (
         <header className="bg-white/95 backdrop-blur-sm px-5 py-4 flex items-center sticky top-0 z-50 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
@@ -33,6 +51,33 @@ export function Header() {
                     ShelterConnect
                 </span>
             </button>
+
+            {/* Auth Button */}
+            <div className="ml-auto flex items-center gap-2">
+                {authed ? (
+                    <>
+                        <span className="text-xs text-gray-400 hidden min-[360px]:inline truncate max-w-[100px]">
+                            {userEmail}
+                        </span>
+                        <button
+                            onClick={handleLogout}
+                            className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+                            aria-label="Logout"
+                        >
+                            <LogOut className="h-4.5 w-4.5" />
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        onClick={() => router.push('/login')}
+                        className="h-9 px-3 flex items-center gap-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 text-sm"
+                        style={{ fontWeight: 500 }}
+                    >
+                        <LogIn className="h-4 w-4" />
+                        <span className="hidden min-[360px]:inline">Login</span>
+                    </button>
+                )}
+            </div>
         </header>
     );
 }

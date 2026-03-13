@@ -25,7 +25,8 @@ export interface Shelter {
   };
 }
 
-export const mockShelters: Shelter[] = [
+export const shelterSeedData: Shelter[] = [
+
   {
     id: '1',
     name: 'Hope Haven Shelter',
@@ -148,7 +149,11 @@ export const mockShelters: Shelter[] = [
   },
 ];
 
-export const emergencyContacts = [
+/** @deprecated Use server-side getAllShelters() from '@/lib/shelters' instead */
+export const mockShelters = shelterSeedData;
+
+
+export const emergencyContactsSeedData = [
   {
     id: 'national-hotline',
     name: 'National Homeless Hotline',
@@ -175,7 +180,7 @@ export const emergencyContacts = [
   },
 ];
 
-export const safetyTips = [
+export const safetyTipsSeedData = [
   {
     id: 'tip-1',
     title: 'Stay in Well-Lit Areas',
@@ -202,3 +207,8 @@ export const safetyTips = [
     description: 'Visit free clinics for regular checkups. Many shelters offer health screenings.',
   },
 ];
+
+/** @deprecated Use server-side getEmergencyContacts() from '@/lib/shelters' instead */
+export const emergencyContacts = emergencyContactsSeedData;
+/** @deprecated Use server-side getSafetyTips() from '@/lib/shelters' instead */
+export const safetyTips = safetyTipsSeedData;

@@ -2,9 +2,38 @@
 
 import { useState } from 'react';
 import { Phone, Shield, Heart, ChevronRight, ChevronDown } from 'lucide-react';
-import { emergencyContacts, safetyTips } from '@/data/shelters';
+import { emergencyContacts as defaultContacts, safetyTips as defaultTips } from '@/data/shelters';
 
+interface EmergencyContact {
+    id: string;
+    name: string;
+    phone: string;
+    description: string;
+}
+
+interface SafetyTip {
+    id: string;
+    title: string;
+    description: string;
+}
+
+interface EmergencyActionListProps {
+    contacts?: EmergencyContact[];
+    tips?: SafetyTip[];
+}
+
+/** Server-friendly variant — receives data as props from a Server Component */
+export function EmergencyActionListServer({ contacts, tips }: EmergencyActionListProps) {
+    return <EmergencyActionListInner contacts={contacts ?? []} tips={tips ?? []} />;
+}
+
+/** Original export — still works for backward compatibility */
 export function EmergencyActionList() {
+    return <EmergencyActionListInner contacts={defaultContacts} tips={defaultTips} />;
+}
+
+function EmergencyActionListInner({ contacts, tips }: { contacts: EmergencyContact[]; tips: SafetyTip[] }) {
+
     const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
     const toggleSection = (section: string) => {
@@ -36,11 +65,13 @@ export function EmergencyActionList() {
 
                 {expandedSection === 'contacts' && (
                     <div className="border-t border-gray-100">
-                        {emergencyContacts.map((contact, index) => (
+                        {contacts.map((contact, index) => (
+
                             <a
                                 key={contact.id}
                                 href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`}
-                                className={`flex items-center gap-3 px-4 py-3 min-h-[60px] hover:bg-gray-50/60 transition-colors duration-150 ${index < emergencyContacts.length - 1 ? 'border-b border-gray-50' : ''
+                                className={`flex items-center gap-3 px-4 py-3 min-h-[60px] hover:bg-gray-50/60 transition-colors duration-150 ${index < contacts.length - 1 ? 'border-b border-gray-50' : ''
+
                                     }`}
                             >
                                 <div className="w-10 h-10 bg-[#E0F7FA]/40 rounded-full flex items-center justify-center shrink-0">
@@ -87,10 +118,12 @@ export function EmergencyActionList() {
 
                 {expandedSection === 'safety' && (
                     <div className="border-t border-gray-100">
-                        {safetyTips.map((tip, index) => (
+                        {tips.map((tip, index) => (
+
                             <div
                                 key={tip.id}
-                                className={`px-4 py-3 ${index < safetyTips.length - 1 ? 'border-b border-gray-50' : ''
+                                className={`px-4 py-3 ${index < tips.length - 1 ? 'border-b border-gray-50' : ''
+
                                     }`}
                             >
                                 <div className="flex items-start gap-3">
