@@ -1,10 +1,18 @@
-'use client';
-
 import { AlertTriangle } from 'lucide-react';
+import { getEmergencyContacts, getSafetyTips } from '@/lib/shelters';
 import { EmergencyPrimaryCTA } from '@/components/emergency/EmergencyPrimaryCTA';
-import { EmergencyActionList } from '@/components/emergency/EmergencyActionList';
+import { EmergencyActionListServer } from '@/components/emergency/EmergencyActionList';
 
-export default function EmergencyPage() {
+/**
+ * Emergency page — Server Component (SSR).
+ * Emergency contacts and safety tips are fetched on the server at request time.
+ */
+export default async function EmergencyPage() {
+    const [contacts, tips] = await Promise.all([
+        getEmergencyContacts(),
+        getSafetyTips(),
+    ]);
+
     return (
         <div className="flex flex-col min-h-[calc(100vh-61px-56px)] bg-gray-50/60">
             {/* Hero */}
@@ -32,7 +40,7 @@ export default function EmergencyPage() {
                 <p className="text-sm text-gray-400 mb-3" style={{ fontWeight: 500 }}>
                     Resources
                 </p>
-                <EmergencyActionList />
+                <EmergencyActionListServer contacts={contacts} tips={tips} />
             </div>
         </div>
     );
