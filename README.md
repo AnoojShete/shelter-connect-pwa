@@ -1,4 +1,1 @@
-
-  # 100% Vibe Coded
-  # Niraj AutisTIC
-  
+# 100% Vibe Coded
