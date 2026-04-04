@@ -2,6 +2,11 @@ import { body, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 
 /**
+ * Validation Middleware — Practical 9 (Enhanced)
+ * Stronger password policy: 8+ chars, uppercase, lowercase, digit, special character.
+ */
+
+/**
  * Middleware: check validation results and return errors if any.
  */
 export function handleValidationErrors(
@@ -23,6 +28,7 @@ export function handleValidationErrors(
 
 /**
  * Validation rules for user registration.
+ * Password policy: Min 8 chars, at least one uppercase, lowercase, digit, and special char.
  */
 export const validateRegister = [
     body('email')
@@ -30,8 +36,16 @@ export const validateRegister = [
         .withMessage('Please provide a valid email')
         .normalizeEmail(),
     body('password')
-        .isLength({ min: 6 })
-        .withMessage('Password must be at least 6 characters')
+        .isLength({ min: 8 })
+        .withMessage('Password must be at least 8 characters')
+        .matches(/[A-Z]/)
+        .withMessage('Password must contain at least one uppercase letter')
+        .matches(/[a-z]/)
+        .withMessage('Password must contain at least one lowercase letter')
+        .matches(/[0-9]/)
+        .withMessage('Password must contain at least one digit')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/)
+        .withMessage('Password must contain at least one special character (!@#$%^&*)')
         .trim(),
     handleValidationErrors,
 ];

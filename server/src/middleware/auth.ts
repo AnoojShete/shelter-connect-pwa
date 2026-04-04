@@ -1,7 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'shelterconnect-secret-key-change-in-production';
+/**
+ * Auth Middleware — Practical 9 (Enhanced)
+ * - Requires JWT_SECRET from environment (no hardcoded fallback)
+ * - Verifies Bearer token from Authorization header
+ * - Role-based authorization middleware
+ */
+
+// SECURITY: Require env var — no fallback
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    console.error('❌ FATAL: JWT_SECRET environment variable is not set.');
+    console.error('   Set JWT_SECRET in server/.env before starting the server.');
+    process.exit(1);
+}
 
 /**
  * Extended Request interface to include user from JWT.
@@ -32,7 +46,7 @@ export function authenticateToken(
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as {
+        const decoded = jwt.verify(token, JWT_SECRET!) as {
             id: string;
             email: string;
             role: string;

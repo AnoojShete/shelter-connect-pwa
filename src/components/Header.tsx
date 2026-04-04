@@ -1,25 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated, getCurrentUser, logout } from '@/lib/auth';
-import { LogIn, LogOut } from 'lucide-react';
+import { useAuth } from '@/components/AuthContext';
+import { LogIn, LogOut, User } from 'lucide-react';
 
 export function Header() {
     const router = useRouter();
-    const [authed, setAuthed] = useState(false);
-    const [userEmail, setUserEmail] = useState('');
+    const { isAuthenticated, user, logout } = useAuth();
 
-    useEffect(() => {
-        setAuthed(isAuthenticated());
-        const user = getCurrentUser();
-        if (user) setUserEmail(user.email);
-    }, []);
-
-    const handleLogout = () => {
-        logout();
-        setAuthed(false);
-        setUserEmail('');
+    const handleLogout = async () => {
+        await logout();
         router.push('/');
     };
 
@@ -54,14 +44,23 @@ export function Header() {
 
             {/* Auth Button */}
             <div className="ml-auto flex items-center gap-2">
-                {authed ? (
+                {isAuthenticated ? (
                     <>
-                        <span className="text-xs text-gray-400 hidden min-[360px]:inline truncate max-w-[100px]">
-                            {userEmail}
-                        </span>
+                        <button
+                            onClick={() => router.push('/profile')}
+                            className="flex items-center gap-1.5 h-9 px-3 rounded-lg hover:bg-gray-100 transition-colors"
+                            aria-label="View profile"
+                        >
+                            <div className="w-7 h-7 bg-[#0F52BA]/10 rounded-full flex items-center justify-center">
+                                <User className="h-3.5 w-3.5 text-[#0F52BA]" />
+                            </div>
+                            <span className="text-xs text-gray-500 hidden min-[360px]:inline truncate max-w-[80px]">
+                                {user?.email}
+                            </span>
+                        </button>
                         <button
                             onClick={handleLogout}
-                            className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+                            className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-red-50 transition-colors text-gray-400 hover:text-red-500"
                             aria-label="Logout"
                         >
                             <LogOut className="h-4.5 w-4.5" />

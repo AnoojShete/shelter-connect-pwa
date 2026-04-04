@@ -1,6 +1,8 @@
 /**
- * Client-side authentication helpers.
- * Handles login, register, token storage, and auth state.
+ * Client-side authentication helpers — Practical 9 (Enhanced)
+ * Updated to work with cookie-based refresh tokens.
+ * Note: Most auth logic has moved to AuthContext.tsx.
+ * These functions remain for backward compatibility and SSR-safe checks.
  */
 
 const API_BASE = 'http://localhost:5000/api';
@@ -28,6 +30,7 @@ export async function register(
     const res = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
     });
     return res.json();
@@ -43,6 +46,7 @@ export async function login(
     const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
     });
     const data: AuthResponse = await res.json();
@@ -56,11 +60,41 @@ export async function login(
 }
 
 /**
- * Logout — clear stored auth data.
+ * Logout — clear stored auth data and revoke refresh token.
  */
-export function logout(): void {
+export async function logout(): Promise<void> {
+    const token = getToken();
+    try {
+        await fetch(`${API_BASE}/auth/logout`, {
+            method: 'POST',
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            credentials: 'include',
+        });
+    } catch {
+        // Silent fail
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+}
+
+/**
+ * Refresh access token using httpOnly cookie.
+ */
+export async function refreshAccessToken(): Promise<string | null> {
+    try {
+        const res = await fetch(`${API_BASE}/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+        const data = await res.json();
+        if (data.success && data.data?.token) {
+            localStorage.setItem('token', data.data.token);
+            return data.data.token;
+        }
+        return null;
+    } catch {
+        return null;
+    }
 }
 
 /**

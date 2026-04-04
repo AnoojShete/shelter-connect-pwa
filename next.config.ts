@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Security headers
+  // Security headers — Practical 10
   async headers() {
     return [
       {
@@ -35,6 +35,14 @@ const nextConfig: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self)',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com https://*.tile.openstreetmap.org; connect-src 'self' http://localhost:5000 https://*.tile.openstreetmap.org",
           },
         ],
       },

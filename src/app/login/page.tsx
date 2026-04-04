@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { login } from '@/lib/auth';
+import { useAuth } from '@/components/AuthContext';
 import { LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -60,35 +61,39 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3" role="alert">
                             {error}
                         </div>
                     )}
 
                     <div>
-                        <label className="text-sm text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>
+                        <label htmlFor="login-email" className="text-sm text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>
                             Email
                         </label>
                         <input
+                            id="login-email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            autoComplete="email"
                             className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F52BA]/20 focus:border-[#0F52BA]/40 transition-all duration-200 min-h-[48px]"
                             placeholder="you@example.com"
                         />
                     </div>
 
                     <div>
-                        <label className="text-sm text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>
+                        <label htmlFor="login-password" className="text-sm text-gray-700 mb-1.5 block" style={{ fontWeight: 500 }}>
                             Password
                         </label>
                         <div className="relative">
                             <input
+                                id="login-password"
                                 type={showPassword ? 'text' : 'password'}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                autoComplete="current-password"
                                 className="w-full px-4 py-3 pr-12 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F52BA]/20 focus:border-[#0F52BA]/40 transition-all duration-200 min-h-[48px]"
                                 placeholder="Your password"
                             />
@@ -96,6 +101,7 @@ export default function LoginPage() {
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
                                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                             </button>
